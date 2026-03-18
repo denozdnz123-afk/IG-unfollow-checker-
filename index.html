@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IG Unfollow Checker — เช็คคนไม่ฟอลกลับ</title>
+    <meta name="description"
+        content="เช็คว่าคุณฟอลใครใน Instagram แล้วเขาไม่ฟอลกลับ ปลอดภัย 100% ไม่ต้องล็อกอิน ข้อมูลไม่ถูกส่งออกไปไหน">
+    <meta property="og:title" content="IG Unfollow Checker — เช็คคนไม่ฟอลกลับ">
+    <meta property="og:description" content="ปลอดภัย 100% ไม่ต้องล็อกอิน ข้อมูลไม่ออกจากเบราว์เซอร์คุณ">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <!-- Noise overlay -->
+    <div class="noise-overlay"></div>
+
+    <!-- Ambient BG -->
+    <div class="ambient">
+        <div class="amb amb-1"></div>
+        <div class="amb amb-2"></div>
+        <div class="amb amb-3"></div>
+    </div>
+
+    <!-- ===== NAVBAR ===== -->
+    <nav class="navbar" id="navbar">
+        <a href="#" class="nav-logo" onclick="window.scrollTo({top:0, behavior:'smooth'}); return false;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="26" height="26">
+                <rect x="2" y="2" width="20" height="20" rx="6" />
+                <circle cx="12" cy="12" r="4.5" />
+                <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
+            </svg>
+            IG Unfollow Checker
+        </a>
+        <div class="nav-links">
+            <a href="#tutorial" class="nav-link">วิธีใช้งาน</a>
+            <a href="#upload-section" class="nav-btn">เช็คเลย</a>
+        </div>
+    </nav>
+
+    <!-- ===== HERO ===== -->
+    <header class="hero">
+        <div class="hero-title">
+            <h1>INSTAGRAM UNFOLLOW<br><span class="gradient-text">CHECKER</span></h1>
+        </div>
+        <p class="hero-sub">รู้ว่าใครบ้างที่คุณฟอล <strong>แต่เขาไม่ฟอลกลับ</strong> — ไม่ต้องล็อกอิน
+            ไม่ต้องกรอกรหัสผ่าน</p>
+        <div class="hero-actions">
+            <a href="#tutorial" class="hero-cta-sec">
+                ดูวิธีใช้งาน
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                    <rect x="3" y="3" width="18" height="18" rx="2" />
+                    <path d="M3 9h18M9 21V9" />
+                </svg>
+            </a>
+            <a href="#upload-section" class="hero-cta">
+                เริ่มเช็คเลย
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="16" height="16">
+                    <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+            </a>
+        </div>
+        <div class="hero-platforms" style="flex-wrap: wrap; gap: 10px;">
+            <span>รองรับทุกอุปกรณ์</span>
+            <div style="display:flex; gap:12px; opacity:0.85; align-items: center; color: var(--text-2);">
+                <span class="platform-badge" style="display:flex; align-items:center; gap:5px;">
+                    <svg viewBox="0 0 384 512" fill="currentColor" width="12" height="12"><path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.7-44.6-35.5-2.8-74.3 20.7-88.5 20.7-15 0-49.4-19.7-76.4-19.7C63.3 141.2 4 184.8 4 273.5q0 39.3 14.4 81.2c12.8 36.7 59 126.7 107.2 125.2 25.2-.6 43-17.9 75.8-17.9 31.8 0 48.3 17.9 76.4 17.9 48.6-.7 90.4-82.5 102.6-119.3-65.2-30.7-61.7-90-61.7-91.9zm-56.6-164.2c27.3-32.4 24.8-61.9 24-72.5-24.1 1.4-52 16.4-67.9 34.9-17.5 19.8-27.8 44.3-25.6 71.9 26.1 2 49.9-11.4 69.5-34.3z"/></svg>
+                    iOS / Mac
+                </span>
+                <span style="font-size: 0.6rem; opacity: 0.5;">•</span>
+                <span class="platform-badge" style="display:flex; align-items:center; gap:5px;">
+                    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M17.6 9.48l1.84-3.18c.16-.31.04-.69-.26-.85-.29-.15-.65-.06-.81.24l-1.92 3.32C14.81 8.45 13.46 8 12 8s-2.81.45-4.45 1.01L5.63 5.69c-.16-.3-.52-.39-.81-.24-.29.16-.42.54-.26.85l1.84 3.18C3.15 11.23 1 14.36 1 18h22c0-3.64-2.15-6.77-5.4-8.52zM7 15.25c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25zm10 0c-.69 0-1.25-.56-1.25-1.25s.56-1.25 1.25-1.25 1.25.56 1.25 1.25-.56 1.25-1.25 1.25z"/></svg>
+                    Android
+                </span>
+                <span style="font-size: 0.6rem; opacity: 0.5;">•</span>
+                <span class="platform-badge" style="display:flex; align-items:center; gap:5px;">
+                    <svg viewBox="0 0 448 512" fill="currentColor" width="12" height="12"><path d="M0 93.7l183.6-25.3v177.4H0V93.7zm0 324.6l183.6 25.3V268.4H0v149.9zm203.8 28L448 480V268.4H203.8v177.9zm0-380.6v180.1H448V32L203.8 65.7z"/></svg>
+                    Windows
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+
+        <!-- ===== HOW TO GET THE ZIP (Tutorial) ===== -->
+        <section class="section tutorial-section" id="tutorial">
+            <div class="section-label">ขั้นตอนที่ 1</div>
+            <h2 class="section-heading">ดาวน์โหลดข้อมูลจาก Instagram</h2>
+            <p class="section-desc">ก่อนอัปโหลด ต้องขอข้อมูลจาก Instagram ก่อน ทำตามขั้นตอนด้านล่างได้เลย</p>
+
+            <!-- Steps Timeline -->
+            <div class="timeline">
+                <div class="tl-step">
+                    <div class="tl-num">01</div>
+                    <div class="tl-body">
+                        <h3>เข้าไปที่ศูนย์บัญชี Instagram</h3>
+                        <p>กดที่ลิงก์นี้เพื่อไปหน้า <a
+                                href="https://accountscenter.instagram.com/info_and_permissions/dyi/" target="_blank"
+                                rel="noopener noreferrer">ดาวน์โหลดข้อมูลของคุณ</a> หรือเข้าผ่าน <strong>โปรไฟล์ → เมนู
+                                ☰ → ศูนย์บัญชี → ข้อมูลและสิทธิ์การอนุญาตของคุณ → ส่งออกข้อมูลของคุณ</strong></p>
+                    </div>
+                </div>
+
+                <div class="tl-step">
+                    <div class="tl-num">02</div>
+                    <div class="tl-body">
+                        <h3>ตั้งค่าการส่งออก</h3>
+                        <p>กด<strong>"สร้างไฟล์ส่งออก" →</strong> เลือก<strong>"บัญชี Instagram"</strong> ของคุณ
+                            <strong>→</strong> เลือก
+                            <strong>"ส่งออกไปยังอุปกรณ์"</strong>
+                            <strong>→</strong> กด
+                            <strong>"ปรับแต่งข้อมูล" →</strong> ติ๊กเฉพาะ <strong>"ผู้ติดตามและคนที่คุณติดตาม"</strong>
+                        </p>
+                        <div class="tip-box">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16"
+                                height="16">
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 8v4M12 16h.01" />
+                            </svg>
+                            ตั้งช่วงวันที่เป็น <strong>"ตลอดเวลา"</strong> และรูปแบบเป็น <strong>JSON</strong> สำคัญมาก!
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tl-step">
+                    <div class="tl-num">03</div>
+                    <div class="tl-body">
+                        <h3>รอรับไฟล์ ZIP</h3>
+                        <p>Instagram จะส่งอีเมลแจ้งเตือนเมื่อไฟล์พร้อม (อาจใช้เวลาสักครู่
+                            หรือนานกว่าชั่วโมงขึ้นอยู่กับรายชื่อยอดFollow)
+                            จากนั้นดาวน์โหลดไฟล์ผ่านอีเมลหรือกดดาวโหลดจากหน้ากิจกรรมปัจจุบันเลยเป็นไฟล์
+                            <strong>.zip</strong> มาเก็บไว้ในโทรศัพท์หรือคอมของคุณ
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tutorial Media: Image Viewer + Descriptions -->
+            <div class="tutorial-media">
+
+                <!-- Left: Phone-style image viewer -->
+                <div class="phone-viewer">
+                    <div class="phone-screen" id="phone-screen">
+                        <img id="phone-img" src="images/1.1.png" alt="ขั้นตอนที่ 1">
+                    </div>
+                    <!-- Navigation -->
+                    <div class="phone-nav">
+                        <button class="phone-nav-btn" id="carousel-prev" aria-label="Previous">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18"
+                                height="18">
+                                <path d="M15 18l-6-6 6-6" />
+                            </svg>
+                        </button>
+                        <div class="phone-dots" id="carousel-dots">
+                            <button class="phone-dot active" data-slide="0"></button>
+                            <button class="phone-dot" data-slide="1"></button>
+                            <button class="phone-dot" data-slide="2"></button>
+                            <button class="phone-dot" data-slide="3"></button>
+                            <button class="phone-dot" data-slide="4"></button>
+                            <button class="phone-dot" data-slide="5"></button>
+                            <button class="phone-dot" data-slide="6"></button>
+                            <button class="phone-dot" data-slide="7"></button>
+                            <button class="phone-dot" data-slide="8"></button>
+                            <button class="phone-dot" data-slide="9"></button>
+                            <button class="phone-dot" data-slide="10"></button>
+                            <button class="phone-dot" data-slide="11"></button>
+                            <button class="phone-dot" data-slide="12"></button>
+                        </div>
+                        <button class="phone-nav-btn" id="carousel-next" aria-label="Next">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18"
+                                height="18">
+                                <path d="M9 18l6-6-6-6" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Right: Step descriptions -->
+                <div class="carousel-descriptions" id="carousel-descriptions">
+                    <div class="slide-desc active" data-desc="0">
+                        <span class="step-badge">ขั้นตอนที่ 1 / 13</span>
+                        <h3>กดปุ่ม "สร้างไฟล์ส่งออก"</h3>
+                        <p>เข้าไปที่หน้า <strong>ส่งออกข้อมูลของคุณ</strong> แล้วกดที่ปุ่มสีน้ำเงิน
+                            <strong>"สร้างไฟล์ส่งออก"</strong> เพื่อเริ่มต้น
+                        </p>
+                    </div>
+                    <div class="slide-desc" data-desc="1">
+                        <span class="step-badge">ขั้นตอนที่ 2 / 13</span>
+                        <h3>เลือกโปรไฟล์ Instagram</h3>
+                        <p>จะมีรายชื่อบัญชีขึ้นมา ให้กดเลือก <strong>Instagram</strong> (ไม่ใช่ Facebook หรือ Meta)</p>
+                    </div>
+                    <div class="slide-desc" data-desc="2">
+                        <span class="step-badge">ขั้นตอนที่ 3 / 13</span>
+                        <h3>เลือก "ส่งออกไปยังอุปกรณ์"</h3>
+                        <p>ทำการกดเลือก <strong>"ส่งออกไปยังอุปกรณ์"</strong> เพื่อดาวน์โหลดข้อมูลลงเครื่องโดยตรง</p>
+                    </div>
+                    <div class="slide-desc" data-desc="3">
+                        <span class="step-badge">ขั้นตอนที่ 4 / 13</span>
+                        <h3>เลือกดาวน์โหลดแบบ "บางส่วน"</h3>
+                        <p>กด <strong>"ปรับแต่งข้อมูล"</strong> เพื่อไม่ต้องโหลดข้อมูลทั้งหมด ประหยัดเวลามากขึ้น
+                        </p>
+                    </div>
+                    <div class="slide-desc" data-desc="4">
+                        <span class="step-badge">ขั้นตอนที่ 5 / 13</span>
+                        <h3>ติ๊กเลือก "ผู้ติดตามและคนที่คุณติดตาม"</h3>
+                        <p>กดล้างทั้งหมดทุกหมวดแล้ว เลื่อนหาและติ๊กถูก <strong>เฉพาะส่วนนี้</strong> เท่านั้น
+                            ส่วนอื่นไม่ต้องเลือก</p>
+                    </div>
+                    <div class="slide-desc" data-desc="5">
+                        <span class="step-badge">ขั้นตอนที่ 6 / 13</span>
+                        <h3>เลือกไปที่ "ช่วงวันที่"</h3>
+                        <p>เป็นการเลือก<strong>วันที่</strong>ที่เราต้องการจะดึงออกมา</p>
+                    </div>
+                    <div class="slide-desc" data-desc="6">
+                        <span class="step-badge">ขั้นตอนที่ 7 / 13</span>
+                        <h3>ตั้งระยะเวลาเป็น "ตลอดเวลา"</h3>
+                        <p>เลือกช่วงเวลาเป็น <strong>"ตลอดเวลา"</strong> เพื่อให้ได้รายชื่อคนที่ฟอลครบทั้งหมด</p>
+                    </div>
+                    <div class="slide-desc" data-desc="7">
+                        <span class="step-badge">ขั้นตอนที่ 8 / 13</span>
+                        <h3>กดไปที่ "รูปแบบ"</h3>
+                        <p>ต้องเปลี่ยนเป็น json เพื่อที่เราจะได้ไฟล์ที่สามารถนำไปใช้กับเว็บนี้ได้</p>
+                    </div>
+                    <div class="slide-desc" data-desc="8">
+                        <span class="step-badge">ขั้นตอนที่ 9 / 13</span>
+                        <h3>⚠️ เลือกรูปแบบเป็น JSON</h3>
+                        <p>สำคัญมาก! ต้องตั้งรูปแบบไฟล์เป็น <strong>JSON</strong> เท่านั้น ถ้าเลือก HTML
+                            จะใช้กับเว็บนี้ไม่ได้</p>
+                    </div>
+                    <div class="slide-desc" data-desc="9">
+                        <span class="step-badge">ขั้นตอนที่ 10 / 13</span>
+                        <h3>กดปุ่ม "สร้างไฟล์"</h3>
+                        <p>เมื่อตั้งค่าครบแล้ว กดที่ปุ่ม <strong>"สร้างไฟล์"</strong> ระบบจะเริ่มสร้างไฟล์ให้ รอสักครู่
+                        </p>
+                    </div>
+                    <div class="slide-desc" data-desc="10">
+                        <span class="step-badge">ขั้นตอนที่ 11 / 13</span>
+                        <h3>รอรับไฟล์ ZIP</h3>
+                        <p>ใส่รหัสผ่านแล้วดำเนินการต่อ จากนั้นรออีเมลแจ้งเตือน หรือเช็คที่หน้าดาวน์โหลดข้อมูล
+                            เพื่อรับไฟล์ <strong>ZIP</strong></p>
+                    </div>
+                    <div class="slide-desc" data-desc="11">
+                        <span class="step-badge">ขั้นตอนที่ 12 / 13</span>
+                        <h3>รอ Instagram ส่งไฟล์ .zip มาให้เราดาวน์โหลด</h3>
+                        <p>รอไฟล์ .zip จาก Instagram ส่งมาให้เราดาวน์โหลด ประมาณ <strong>10นาที - 1ชั่วโมง</strong>
+                            หรืออาจจะนานกว่านั้น ตามยอดฟอลของผู้ใช้งาน</p>
+                    </div>
+
+                    <div class="slide-desc" data-desc="12">
+                        <span class="step-badge">ขั้นตอนที่ 13 / 13</span>
+                        <h3>ดาวน์โหลดไฟล์ ZIP ลงเครื่อง แล้วนำไฟล์ ZIP มาอัปโหลดลงเว็บ!</h3>
+                        <p>กดดาวน์โหลดไฟล์ <strong>ZIP</strong> จากอีเมล หรือจากหน้า
+                            กิจกรรมปัจจุบัน <a href="https://accountscenter.instagram.com/info_and_permissions/dyi/"
+                                target="_blank" style="color: #ff4444; text-decoration: underline;">
+                                ดาวน์โหลดข้อมูลของคุณ
+                            </a> ลงคอมหรือมือถือ แล้วนำไฟล์
+                            ZIP มาอัปโหลดเข้าระบบด้านล่างเพื่อตรวจเช็คได้ทันทีครับ
+                        </p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ===== UPLOAD ===== -->
+        <section class="section upload-section" id="upload-section">
+            <div class="section-label">ขั้นตอนที่ 2</div>
+            <h2 class="section-heading">อัปโหลดไฟล์ ZIP</h2>
+            <p class="section-desc">นำไฟล์ .zip ที่ได้จาก Instagram มาอัปโหลดตรงนี้ ไม่ต้องแตกไฟล์</p>
+
+            <div class="upload-card" id="zip-card">
+                <div class="upload-dropzone" id="zip-dropzone" data-type="zip">
+                    <div class="dropzone-content">
+                        <div class="dz-icon-wrap">
+                            <div class="dz-icon-glow"></div>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="32"
+                                height="32">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="17 8 12 3 7 8" />
+                                <line x1="12" y1="3" x2="12" y2="15" />
+                            </svg>
+                        </div>
+                        <h3>วางไฟล์ .zip ตรงนี้</h3>
+                        <p>ลากมาวาง หรือกดปุ่มด้านล่าง</p>
+                        <label class="upload-btn" for="zip-input">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14"
+                                height="14">
+                                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+                                <polyline points="17 8 12 3 7 8" />
+                                <line x1="12" y1="3" x2="12" y2="15" />
+                            </svg>
+                            เลือกไฟล์ ZIP
+                        </label>
+                        <input type="file" id="zip-input" accept=".zip" hidden>
+                        <p class="dz-note">รองรับเฉพาะไฟล์ .zip จาก Instagram เท่านั้น</p>
+                    </div>
+                    <div class="dropzone-success" hidden>
+                        <div class="success-check">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="28"
+                                height="28">
+                                <path d="M20 6 9 17l-5-5" />
+                            </svg>
+                        </div>
+                        <p id="zip-success-msg">โหลดสำเร็จ!</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analyze Button -->
+            <div id="analyze-container" hidden>
+                <button class="analyze-btn" id="analyze-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                        <path
+                            d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z" />
+                    </svg>
+                    วิเคราะห์ข้อมูล
+                </button>
+            </div>
+        </section>
+
+        <!-- ===== RESULTS ===== -->
+        <section class="section results-section" id="results-section" hidden>
+            <div class="section-label">ขั้นตอนที่ 3</div>
+            <h2 class="section-heading">ผลลัพธ์</h2>
+
+            <!-- Stats -->
+            <div class="stats-row">
+                <div class="stat-pill stat-following">
+                    <span class="stat-val" id="stat-following">0</span>
+                    <span class="stat-lbl">กำลังติดตาม</span>
+                </div>
+                <div class="stat-pill stat-followers">
+                    <span class="stat-val" id="stat-followers">0</span>
+                    <span class="stat-lbl">ผู้ติดตาม</span>
+                </div>
+                <div class="stat-pill stat-nfb">
+                    <span class="stat-val" id="stat-not-following-back">0</span>
+                    <span class="stat-lbl">ไม่ฟอลกลับ</span>
+                </div>
+                <div class="stat-pill stat-fans">
+                    <span class="stat-val" id="stat-fans">0</span>
+                    <span class="stat-lbl">แฟนคลับ</span>
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" data-tab="not-following-back">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                        <line x1="18" y1="6" x2="6" y2="18" />
+                        <line x1="6" y1="6" x2="18" y2="18" />
+                    </svg>
+                    ไม่ฟอลกลับ <span class="tab-count" id="tab-count-nfb">0</span>
+                </button>
+                <button class="tab" data-tab="fans">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                        <path
+                            d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+                    </svg>
+                    แฟนคลับ <span class="tab-count" id="tab-count-fans">0</span>
+                </button>
+                <button class="tab" data-tab="mutual">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                        <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                        <circle cx="9" cy="7" r="4" />
+                        <polyline points="16 11 18 13 22 9" />
+                    </svg>
+                    ฟอลกันทั้งคู่ <span class="tab-count" id="tab-count-mutual">0</span>
+                </button>
+            </div>
+
+            <!-- Search -->
+            <div class="search-wrap">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon"
+                    width="16" height="16">
+                    <circle cx="11" cy="11" r="8" />
+                    <line x1="21" y1="21" x2="16.65" y2="16.65" />
+                </svg>
+                <input type="text" id="search-input" class="search-input" placeholder="ค้นหาชื่อผู้ใช้...">
+            </div>
+
+            <!-- Table -->
+            <div class="table-wrap">
+                <table class="result-table" id="results-table">
+                    <thead>
+                        <tr>
+                            <th class="th-n">#</th>
+                            <th>ชื่อผู้ใช้</th>
+                            <th class="th-date">วันที่ติดตาม</th>
+                            <th class="th-link">ลิงก์</th>
+                        </tr>
+                    </thead>
+                    <tbody id="results-body"></tbody>
+                </table>
+                <div class="empty-state" id="no-results" hidden>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="40"
+                        height="40">
+                        <circle cx="12" cy="12" r="10" />
+                        <path d="M16 16s-1.5-2-4-2-4 2-4 2" />
+                        <line x1="9" y1="9" x2="9.01" y2="9" />
+                        <line x1="15" y1="9" x2="15.01" y2="9" />
+                    </svg>
+                    <p>ไม่พบผลลัพธ์</p>
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div class="actions-row">
+                <button class="btn-outline" id="export-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                        <rect x="8" y="2" width="8" height="4" rx="1" />
+                        <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2" />
+                    </svg>
+                    คัดลอกรายชื่อ
+                </button>
+                <button class="btn-primary" id="reset-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                        <polyline points="23 4 23 10 17 10" />
+                        <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
+                    </svg>
+                    เช็คใหม่
+                </button>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="footer-inner">
+            <div class="footer-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
+                    <rect x="2" y="2" width="20" height="20" rx="6" />
+                    <circle cx="12" cy="12" r="4.5" />
+                    <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
+                </svg>
+                IG Unfollow Checker
+            </div>
+            <p class="footer-note">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                    <rect width="18" height="11" x="3" y="11" rx="2" />
+                    <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                </svg>
+                ข้อมูลทั้งหมดประมวลผลบนเบราว์เซอร์ของคุณ ไม่มีอะไรถูกส่งออกไป
+            </p>
+        </div>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="script.js"></script>
+    <script>
+        // ========== YouTube Embed ==========
+        function embedYouTube() {
+            const input = document.getElementById('yt-url-input');
+            const url = input.value.trim();
+            if (!url) return;
+
+            let videoId = '';
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+                /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/
+            ];
+            for (const p of patterns) {
+                const m = url.match(p);
+                if (m) { videoId = m[1]; break; }
+            }
+
+            if (!videoId) {
+                alert('ไม่พบ Video ID กรุณาวางลิงก์ YouTube ที่ถูกต้อง');
+                return;
+            }
+
+            const wrapper = document.getElementById('yt-placeholder');
+            wrapper.innerHTML = `
+            <iframe
+                src="https://www.youtube.com/embed/${videoId}?rel=0&modestbranding=1"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowfullscreen
+                style="width:100%;height:100%;border-radius:12px;"
+            ></iframe>`;
+        }
+
+        // ========== Image Carousel ==========
+        (function () {
+            const images = [
+                'images/1.1.png', 'images/2.1.png', 'images/3.1.png',
+                'images/4.1.1.png', 'images/4.1.2.png', 'images/4.2.1.png',
+                'images/4.2.2.png', 'images/4.3.1.png', 'images/4.3.2.png',
+                'images/5.1.png', 'images/6.1.png', 'images/7.1.png',
+                'images/8.1.png'
+            ];
+            const img = document.getElementById('phone-img');
+            const dots = document.querySelectorAll('#carousel-dots .phone-dot');
+            const descs = document.querySelectorAll('.slide-desc');
+            const prevBtn = document.getElementById('carousel-prev');
+            const nextBtn = document.getElementById('carousel-next');
+            const screen = document.getElementById('phone-screen');
+            let current = 0;
+            const total = images.length;
+
+            function goTo(index) {
+                if (index < 0) index = total - 1;
+                if (index >= total) index = 0;
+                current = index;
+                // Fade out → swap → fade in
+                img.style.opacity = '0';
+                setTimeout(() => {
+                    img.src = images[current];
+                    img.alt = 'ขั้นตอนที่ ' + (current + 1);
+                    img.style.opacity = '1';
+                }, 150);
+                dots.forEach((dot, i) => dot.classList.toggle('active', i === current));
+                descs.forEach((desc, i) => desc.classList.toggle('active', i === current));
+            }
+
+            if (prevBtn) prevBtn.addEventListener('click', () => goTo(current - 1));
+            if (nextBtn) nextBtn.addEventListener('click', () => goTo(current + 1));
+            dots.forEach(dot => dot.addEventListener('click', () => goTo(parseInt(dot.dataset.slide))));
+
+            // Swipe support for mobile
+            if (screen) {
+                let startX = 0, diffX = 0;
+                screen.addEventListener('touchstart', e => { startX = e.touches[0].clientX; }, { passive: true });
+                screen.addEventListener('touchmove', e => { diffX = e.touches[0].clientX - startX; }, { passive: true });
+                screen.addEventListener('touchend', () => {
+                    if (Math.abs(diffX) > 40) {
+                        diffX < 0 ? goTo(current + 1) : goTo(current - 1);
+                    }
+                    diffX = 0;
+                });
+            }
+        })();
+    </script>
+</body>
+
+</html>
