@@ -8,7 +8,25 @@ let currentTab = 'not-following-back';
 let analysisResults = {
     notFollowingBack: [],
     fans: [],
-    mutual: []
+    mutual: [],
+    whitelist: []
+};
+
+let whitelistUsers = JSON.parse(localStorage.getItem('ig_whitelist') || '[]');
+const whitelistSet = new Set(whitelistUsers);
+
+function saveWhitelist() {
+    localStorage.setItem('ig_whitelist', JSON.stringify(Array.from(whitelistSet)));
+}
+
+window.toggleWhitelist = function(username) {
+    if (whitelistSet.has(username)) {
+        whitelistSet.delete(username);
+    } else {
+        whitelistSet.add(username);
+    }
+    saveWhitelist();
+    analyze(true);
 };
 
 // Sorting
@@ -180,13 +198,14 @@ function showUploadSuccess(dropzone, msg) {
 
 // ========== Analyze ==========
 
-function analyze() {
+function analyze(isRefresh = false) {
     if (!followersData || !followingData) return;
 
     const followersSet = new Set(followersData.map(u => u.username.toLowerCase()));
     const followingSet = new Set(followingData.map(u => u.username.toLowerCase()));
 
-    analysisResults.notFollowingBack = followingData.filter(u => !followersSet.has(u.username.toLowerCase()));
+    analysisResults.notFollowingBack = followingData.filter(u => !followersSet.has(u.username.toLowerCase()) && !whitelistSet.has(u.username.toLowerCase()));
+    analysisResults.whitelist = followingData.filter(u => !followersSet.has(u.username.toLowerCase()) && whitelistSet.has(u.username.toLowerCase()));
     analysisResults.fans = followersData.filter(u => !followingSet.has(u.username.toLowerCase()));
     analysisResults.mutual = followingData.filter(u => followersSet.has(u.username.toLowerCase()));
 
@@ -197,11 +216,21 @@ function analyze() {
     document.getElementById('tab-count-nfb').textContent = analysisResults.notFollowingBack.length;
     document.getElementById('tab-count-fans').textContent = analysisResults.fans.length;
     document.getElementById('tab-count-mutual').textContent = analysisResults.mutual.length;
+    
+    const tabCountWhitelist = document.getElementById('tab-count-whitelist');
+    if (tabCountWhitelist) tabCountWhitelist.textContent = analysisResults.whitelist.length;
 
     resultsSection.hidden = false;
-    renderTable(analysisResults.notFollowingBack);
-    animateStats();
-    resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+    // When called from whitelist toggle, stay on current tab and don't scroll
+    if (isRefresh) {
+        const map = { 'not-following-back': 'notFollowingBack', fans: 'fans', mutual: 'mutual', whitelist: 'whitelist' };
+        renderTable(analysisResults[map[currentTab]], searchInput.value);
+    } else {
+        renderTable(analysisResults.notFollowingBack);
+        animateStats();
+        resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
 // ========== Sorting ==========
@@ -230,7 +259,7 @@ function toggleSort(column) {
     }
     currentPage = 1;
     updateSortIndicators();
-    const map = { 'not-following-back': 'notFollowingBack', fans: 'fans', mutual: 'mutual' };
+    const map = { 'not-following-back': 'notFollowingBack', fans: 'fans', mutual: 'mutual', whitelist: 'whitelist' };
     renderTable(analysisResults[map[currentTab]], searchInput.value);
 }
 
@@ -276,11 +305,24 @@ function renderTable(data, filter = '') {
         const delay = Math.min(index * 25, 600);
         tr.style.opacity = '0';
         tr.style.animation = `fadeInUp 0.4s cubic-bezier(0.25, 1, 0.5, 1) ${delay}ms forwards`;
+        const isWhitelisted = whitelistSet.has(user.username.toLowerCase());
+        const safeUsername = user.username.toLowerCase().replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+        const actionBtn = (currentTab === 'not-following-back' || currentTab === 'whitelist') ? `
+            <button class="btn-action ${isWhitelisted ? 'restore' : 'hide'}" onclick="toggleWhitelist('${safeUsername}')" title="${isWhitelisted ? 'เลิกซ่อน' : 'ซ่อนจากรายการ'}">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16">
+                    ${isWhitelisted 
+                        ? '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>' 
+                        : '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>'}
+                </svg>
+            </button>
+        ` : '';
+
         tr.innerHTML = `
             <td class="td-n">${globalIndex + 1}</td>
             <td class="td-username">${escapeHtml(user.username)}</td>
             <td class="td-date">${formatDate(user.timestamp)}</td>
-            <td class="td-link"><a href="${escapeHtml(user.href)}" target="_blank" rel="noopener noreferrer">เปิด IG ↗</a></td>`;
+            <td class="td-link"><a href="${escapeHtml(user.href)}" target="_blank" rel="noopener noreferrer">เปิด IG ↗</a></td>
+            <td class="td-action">${actionBtn}</td>`;
         fragment.appendChild(tr);
     });
     resultsBody.appendChild(fragment);
@@ -362,7 +404,7 @@ function getPageRange(current, total) {
 
 function goToPage(page) {
     currentPage = page;
-    const map = { 'not-following-back': 'notFollowingBack', fans: 'fans', mutual: 'mutual' };
+    const map = { 'not-following-back': 'notFollowingBack', fans: 'fans', mutual: 'mutual', whitelist: 'whitelist' };
     renderTable(analysisResults[map[currentTab]], searchInput.value);
     document.querySelector('.table-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
@@ -401,14 +443,14 @@ function switchTab(tab) {
     updateSortIndicators();
     document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
     searchInput.value = '';
-    const map = { 'not-following-back': 'notFollowingBack', fans: 'fans', mutual: 'mutual' };
+    const map = { 'not-following-back': 'notFollowingBack', fans: 'fans', mutual: 'mutual', whitelist: 'whitelist' };
     renderTable(analysisResults[map[tab]]);
 }
 
 // ========== Export ==========
 
 function getExportData() {
-    const map = { 'not-following-back': { data: analysisResults.notFollowingBack, label: 'ไม่ฟอลกลับ' }, fans: { data: analysisResults.fans, label: 'แฟนคลับ' }, mutual: { data: analysisResults.mutual, label: 'ฟอลกันทั้งคู่' } };
+    const map = { 'not-following-back': { data: analysisResults.notFollowingBack, label: 'ไม่ฟอลกลับ' }, fans: { data: analysisResults.fans, label: 'แฟนคลับ' }, mutual: { data: analysisResults.mutual, label: 'ฟอลกันทั้งคู่' }, whitelist: { data: analysisResults.whitelist, label: 'ละเว้น' } };
     return map[currentTab];
 }
 
@@ -462,7 +504,7 @@ function downloadFile(content, filename, mimeType) {
 
 function resetAll() {
     followersData = followingData = null;
-    analysisResults = { notFollowingBack: [], fans: [], mutual: [] };
+    analysisResults = { notFollowingBack: [], fans: [], mutual: [], whitelist: [] };
     currentTab = 'not-following-back';
     currentPage = 1;
     sortState = { column: null, direction: 'asc' };
@@ -530,7 +572,7 @@ analyzeBtn.addEventListener('click', analyze);
 document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
 searchInput.addEventListener('input', e => {
     currentPage = 1;
-    const map = { 'not-following-back': 'notFollowingBack', fans: 'fans', mutual: 'mutual' };
+    const map = { 'not-following-back': 'notFollowingBack', fans: 'fans', mutual: 'mutual', whitelist: 'whitelist' };
     renderTable(analysisResults[map[currentTab]], e.target.value);
 });
 exportBtn.addEventListener('click', exportResults);

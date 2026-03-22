@@ -19,6 +19,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="style.css">
+    <style>
+        .th-action { width: 60px; text-align: center; }
+        .td-action { text-align: center; }
+        .btn-action { background: transparent; border: none; cursor: pointer; color: var(--text-3); padding: 4px 6px; border-radius: 6px; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; }
+        .btn-action:hover { background: rgba(255, 255, 255, 0.08); }
+        .btn-action.hide:hover { color: var(--danger); }
+        .btn-action.restore:hover { color: var(--success); }
+    </style>
 </head>
 
 <body>
@@ -390,6 +398,13 @@
                     </svg>
                     ฟอลกันทั้งคู่ <span class="tab-count" id="tab-count-mutual">0</span>
                 </button>
+                <button class="tab" data-tab="whitelist">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                        <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path>
+                        <line x1="1" y1="1" x2="23" y2="23"></line>
+                    </svg>
+                    ละเว้น <span class="tab-count" id="tab-count-whitelist">0</span>
+                </button>
             </div>
 
             <!-- Search -->
@@ -417,6 +432,7 @@
                                 <span class="sort-arrow"></span>
                             </th>
                             <th class="th-link">ลิงก์</th>
+                            <th class="th-action">จัดการ</th>
                         </tr>
                     </thead>
                     <tbody id="results-body"></tbody>
