@@ -9,6 +9,11 @@
         content="เช็คว่าคุณฟอลใครใน Instagram แล้วเขาไม่ฟอลกลับ ปลอดภัย 100% ไม่ต้องล็อกอิน ข้อมูลไม่ถูกส่งออกไปไหน">
     <meta property="og:title" content="IG Unfollow Checker — เช็คคนไม่ฟอลกลับ">
     <meta property="og:description" content="ปลอดภัย 100% ไม่ต้องล็อกอิน ข้อมูลไม่ออกจากเบราว์เซอร์คุณ">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ig-unfollow-checker.pages.dev/">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="IG Unfollow Checker — เช็คคนไม่ฟอลกลับ">
+    <meta name="twitter:description" content="เช็คว่าคุณฟอลใครใน Instagram แล้วเขาไม่ฟอลกลับ ปลอดภัย 100%">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700;800;900&display=swap"
@@ -403,8 +408,14 @@
                     <thead>
                         <tr>
                             <th class="th-n">#</th>
-                            <th>ชื่อผู้ใช้</th>
-                            <th class="th-date">วันที่ติดตาม</th>
+                            <th class="sortable" data-sort="username">
+                                ชื่อผู้ใช้
+                                <span class="sort-arrow"></span>
+                            </th>
+                            <th class="th-date sortable" data-sort="date">
+                                วันที่ติดตาม
+                                <span class="sort-arrow"></span>
+                            </th>
                             <th class="th-link">ลิงก์</th>
                         </tr>
                     </thead>
@@ -420,6 +431,7 @@
                     </svg>
                     <p>ไม่พบผลลัพธ์</p>
                 </div>
+                <div id="pagination"></div>
             </div>
 
             <!-- Actions -->
@@ -431,6 +443,22 @@
                     </svg>
                     คัดลอกรายชื่อ
                 </button>
+                <button class="btn-outline" id="export-csv-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                    </svg>
+                    CSV
+                </button>
+                <button class="btn-outline" id="export-txt-btn">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                        <polyline points="14 2 14 8 20 8" />
+                        <line x1="16" y1="13" x2="8" y2="13" />
+                        <line x1="16" y1="17" x2="8" y2="17" />
+                    </svg>
+                    TXT
+                </button>
                 <button class="btn-primary" id="reset-btn">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="15" height="15">
                         <polyline points="23 4 23 10 17 10" />
@@ -440,24 +468,129 @@
                 </button>
             </div>
         </section>
+        <!-- ===== FAQ ===== -->
+        <section class="section faq-section" id="faq">
+            <div class="section-label">คำถามที่พบบ่อย</div>
+            <h2 class="section-heading">FAQ</h2>
+            <p class="section-desc">คำตอบสำหรับคำถามที่ผู้ใช้ถามบ่อย</p>
+
+            <div class="faq-list">
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>เว็บนี้ปลอดภัยไหม?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>ปลอดภัย 100% ครับ ข้อมูลทั้งหมดถูกประมวลผลบนเบราว์เซอร์ของคุณโดยตรง (client-side) ไม่มีข้อมูลใดถูกส่งไปยังเซิร์ฟเวอร์ใดๆ ทั้งสิ้น คุณสามารถตรวจสอบได้โดยเปิด Network tab ใน DevTools ขณะใช้งาน</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>ทำไมต้องเลือกรูปแบบ JSON?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>เว็บนี้อ่านข้อมูลจากไฟล์ JSON ที่ Instagram สร้างให้ ถ้าเลือก HTML จะไม่สามารถนำมาใช้กับเว็บนี้ได้ เพราะโครงสร้างข้อมูลต่างกัน</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>ต้องล็อกอินเข้า Instagram ผ่านเว็บนี้ไหม?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>ไม่ต้องครับ เว็บนี้ไม่ขอรหัสผ่านหรือข้อมูลล็อกอินใดๆ ทั้งสิ้น คุณแค่ดาวน์โหลดไฟล์ข้อมูลจาก Instagram แล้วนำมาอัปโหลดเข้าเว็บนี้โดยตรง</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>ข้อมูลของฉันถูกส่งไปเก็บที่ไหน?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>ไม่มีที่ไหนเลยครับ ข้อมูลอยู่ในเบราว์เซอร์ของคุณเท่านั้น เมื่อปิดแท็บหรือรีเฟรชหน้าเว็บ ข้อมูลจะหายไปทั้งหมด ไม่มี database ไม่มี cookie ไม่มี tracking</p>
+                    </div>
+                </div>
+                <div class="faq-item">
+                    <button class="faq-question">
+                        <span>ทำไมจำนวนไม่ตรงกับที่เห็นใน Instagram?</span>
+                        <svg class="faq-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" width="18" height="18">
+                            <polyline points="6 9 12 15 18 9" />
+                        </svg>
+                    </button>
+                    <div class="faq-answer">
+                        <p>อาจเกิดจากหลายสาเหตุ เช่น บัญชีที่ถูกระงับ/ลบ อาจไม่ปรากฏในข้อมูล หรือข้อมูลอาจยังไม่อัปเดตล่าสุด ลองขอดาวน์โหลดข้อมูลใหม่แล้วเช็คอีกครั้งครับ</p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </main>
 
     <footer class="footer">
-        <div class="footer-inner">
-            <div class="footer-logo">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18">
-                    <rect x="2" y="2" width="20" height="20" rx="6" />
-                    <circle cx="12" cy="12" r="4.5" />
-                    <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
-                </svg>
-                IG Unfollow Checker
+        <div class="footer-top">
+            <div class="footer-col footer-col-brand">
+                <div class="footer-logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="20" height="20">
+                        <rect x="2" y="2" width="20" height="20" rx="6" />
+                        <circle cx="12" cy="12" r="4.5" />
+                        <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
+                    </svg>
+                    IG Unfollow Checker
+                </div>
+                <p class="footer-brand-desc">เช็คว่าใครไม่ฟอลกลับบน Instagram ปลอดภัย 100% ข้อมูลไม่ถูกส่งออกไปไหน ประมวลผลบนเบราว์เซอร์ของคุณเท่านั้น</p>
             </div>
+
+            <div class="footer-col">
+                <h4 class="footer-col-title">ลิงก์ลัด</h4>
+                <ul class="footer-links">
+                    <li><a href="#tutorial">วิธีใช้งาน</a></li>
+                    <li><a href="#upload-section">อัปโหลดไฟล์</a></li>
+                    <li><a href="#faq">คำถามที่พบบ่อย</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-col">
+                <h4 class="footer-col-title">ติดต่อเรา</h4>
+                <ul class="footer-links">
+                    <li>
+                        <a href="mailto:denozdnz123@gmail.com">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                <rect width="20" height="16" x="2" y="4" rx="2" />
+                                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+                            </svg>
+                            denozdnz123@gmail.com
+                        </a>
+                    </li>
+                    <li>
+                        <a href="https://www.instagram.com/ppomlzr_/" target="_blank" rel="noopener noreferrer">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                                <rect x="2" y="2" width="20" height="20" rx="6" />
+                                <circle cx="12" cy="12" r="4.5" />
+                                <circle cx="17.5" cy="6.5" r="1.5" fill="currentColor" stroke="none" />
+                            </svg>
+                            @ppomlzr_
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <p>&copy; 2026 IG Unfollow Checker — สร้างโดย <strong>Sqzerfz</strong></p>
             <p class="footer-note">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="14" height="14">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="12" height="12">
                     <rect width="18" height="11" x="3" y="11" rx="2" />
                     <path d="M7 11V7a5 5 0 0 1 10 0v4" />
                 </svg>
-                ข้อมูลทั้งหมดประมวลผลบนเบราว์เซอร์ของคุณ ไม่มีอะไรถูกส่งออกไป
+                ข้อมูลประมวลผลบนเบราว์เซอร์เท่านั้น
             </p>
         </div>
     </footer>
@@ -549,5 +682,4 @@
         })();
     </script>
 </body>
-
 </html>

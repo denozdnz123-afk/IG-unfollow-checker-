@@ -11,6 +11,13 @@ let analysisResults = {
     mutual: []
 };
 
+// Sorting
+let sortState = { column: null, direction: 'asc' };
+
+// Pagination
+let currentPage = 1;
+const itemsPerPage = 50;
+
 // DOM
 const zipDropzone = document.getElementById('zip-dropzone');
 const zipInput = document.getElementById('zip-input');
@@ -197,37 +204,167 @@ function analyze() {
     resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
+// ========== Sorting ==========
+
+function sortData(data) {
+    if (!sortState.column) return data;
+    const sorted = [...data];
+    const dir = sortState.direction === 'asc' ? 1 : -1;
+    sorted.sort((a, b) => {
+        if (sortState.column === 'username') {
+            return dir * a.username.localeCompare(b.username);
+        } else if (sortState.column === 'date') {
+            return dir * ((a.timestamp || 0) - (b.timestamp || 0));
+        }
+        return 0;
+    });
+    return sorted;
+}
+
+function toggleSort(column) {
+    if (sortState.column === column) {
+        sortState.direction = sortState.direction === 'asc' ? 'desc' : 'asc';
+    } else {
+        sortState.column = column;
+        sortState.direction = 'asc';
+    }
+    currentPage = 1;
+    updateSortIndicators();
+    const map = { 'not-following-back': 'notFollowingBack', fans: 'fans', mutual: 'mutual' };
+    renderTable(analysisResults[map[currentTab]], searchInput.value);
+}
+
+function updateSortIndicators() {
+    document.querySelectorAll('.sortable').forEach(th => {
+        th.classList.remove('sort-asc', 'sort-desc');
+        if (th.dataset.sort === sortState.column) {
+            th.classList.add(sortState.direction === 'asc' ? 'sort-asc' : 'sort-desc');
+        }
+    });
+}
+
 // ========== Render ==========
 
 function renderTable(data, filter = '') {
     const noResults = document.getElementById('no-results');
     resultsBody.innerHTML = '';
 
-    const filtered = filter
+    let filtered = filter
         ? data.filter(u => u.username.toLowerCase().includes(filter.toLowerCase()))
-        : data;
+        : [...data];
+
+    // Apply sorting
+    filtered = sortData(filtered);
 
     if (filtered.length === 0) {
         noResults.hidden = false;
+        renderPagination(0);
         return;
     }
     noResults.hidden = true;
 
+    // Pagination
+    const totalPages = Math.ceil(filtered.length / itemsPerPage);
+    if (currentPage > totalPages) currentPage = totalPages;
+    const startIdx = (currentPage - 1) * itemsPerPage;
+    const pageData = filtered.slice(startIdx, startIdx + itemsPerPage);
+
     const fragment = document.createDocumentFragment();
-    filtered.forEach((user, index) => {
+    pageData.forEach((user, index) => {
+        const globalIndex = startIdx + index;
         const tr = document.createElement('tr');
-        // Smoother staggering effect with easing
         const delay = Math.min(index * 25, 600);
         tr.style.opacity = '0';
         tr.style.animation = `fadeInUp 0.4s cubic-bezier(0.25, 1, 0.5, 1) ${delay}ms forwards`;
         tr.innerHTML = `
-            <td class="td-n">${index + 1}</td>
+            <td class="td-n">${globalIndex + 1}</td>
             <td class="td-username">${escapeHtml(user.username)}</td>
             <td class="td-date">${formatDate(user.timestamp)}</td>
             <td class="td-link"><a href="${escapeHtml(user.href)}" target="_blank" rel="noopener noreferrer">เปิด IG ↗</a></td>`;
         fragment.appendChild(tr);
     });
     resultsBody.appendChild(fragment);
+    renderPagination(filtered.length);
+}
+
+// ========== Pagination ==========
+
+function renderPagination(totalItems) {
+    const container = document.getElementById('pagination');
+    if (!container) return;
+    container.innerHTML = '';
+    const totalPages = Math.ceil(totalItems / itemsPerPage);
+    if (totalPages <= 1) return;
+
+    const nav = document.createElement('div');
+    nav.className = 'pagination-inner';
+
+    // Info text
+    const info = document.createElement('span');
+    info.className = 'page-info';
+    const start = (currentPage - 1) * itemsPerPage + 1;
+    const end = Math.min(currentPage * itemsPerPage, totalItems);
+    info.textContent = `${start}-${end} จาก ${totalItems}`;
+    nav.appendChild(info);
+
+    const btnsWrap = document.createElement('div');
+    btnsWrap.className = 'page-btns';
+
+    // Prev
+    const prevBtn = document.createElement('button');
+    prevBtn.className = 'page-btn' + (currentPage === 1 ? ' disabled' : '');
+    prevBtn.innerHTML = '‹';
+    prevBtn.disabled = currentPage === 1;
+    prevBtn.addEventListener('click', () => goToPage(currentPage - 1));
+    btnsWrap.appendChild(prevBtn);
+
+    // Page numbers — show smart range
+    const pages = getPageRange(currentPage, totalPages);
+    pages.forEach(p => {
+        if (p === '...') {
+            const ellipsis = document.createElement('span');
+            ellipsis.className = 'page-ellipsis';
+            ellipsis.textContent = '…';
+            btnsWrap.appendChild(ellipsis);
+        } else {
+            const btn = document.createElement('button');
+            btn.className = 'page-btn' + (p === currentPage ? ' active' : '');
+            btn.textContent = p;
+            btn.addEventListener('click', () => goToPage(p));
+            btnsWrap.appendChild(btn);
+        }
+    });
+
+    // Next
+    const nextBtn = document.createElement('button');
+    nextBtn.className = 'page-btn' + (currentPage === totalPages ? ' disabled' : '');
+    nextBtn.innerHTML = '›';
+    nextBtn.disabled = currentPage === totalPages;
+    nextBtn.addEventListener('click', () => goToPage(currentPage + 1));
+    btnsWrap.appendChild(nextBtn);
+
+    nav.appendChild(btnsWrap);
+    container.appendChild(nav);
+}
+
+function getPageRange(current, total) {
+    if (total <= 7) return Array.from({ length: total }, (_, i) => i + 1);
+    const pages = [];
+    pages.push(1);
+    if (current > 3) pages.push('...');
+    for (let i = Math.max(2, current - 1); i <= Math.min(total - 1, current + 1); i++) {
+        pages.push(i);
+    }
+    if (current < total - 2) pages.push('...');
+    pages.push(total);
+    return pages;
+}
+
+function goToPage(page) {
+    currentPage = page;
+    const map = { 'not-following-back': 'notFollowingBack', fans: 'fans', mutual: 'mutual' };
+    renderTable(analysisResults[map[currentTab]], searchInput.value);
+    document.querySelector('.table-wrap').scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 function escapeHtml(str) {
@@ -259,6 +396,9 @@ function animateStats() {
 
 function switchTab(tab) {
     currentTab = tab;
+    currentPage = 1;
+    sortState = { column: null, direction: 'asc' };
+    updateSortIndicators();
     document.querySelectorAll('.tab').forEach(btn => btn.classList.toggle('active', btn.dataset.tab === tab));
     searchInput.value = '';
     const map = { 'not-following-back': 'notFollowingBack', fans: 'fans', mutual: 'mutual' };
@@ -267,9 +407,13 @@ function switchTab(tab) {
 
 // ========== Export ==========
 
-function exportResults() {
+function getExportData() {
     const map = { 'not-following-back': { data: analysisResults.notFollowingBack, label: 'ไม่ฟอลกลับ' }, fans: { data: analysisResults.fans, label: 'แฟนคลับ' }, mutual: { data: analysisResults.mutual, label: 'ฟอลกันทั้งคู่' } };
-    const { data, label } = map[currentTab];
+    return map[currentTab];
+}
+
+function exportResults() {
+    const { data, label } = getExportData();
     if (!data || data.length === 0) { showToast('ไม่มีข้อมูลให้คัดลอก'); return; }
 
     const text = `=== ${label} (${data.length} คน) ===\n\n` + data.map((u, i) => `${i + 1}. @${u.username}`).join('\n');
@@ -284,12 +428,44 @@ function exportResults() {
     });
 }
 
+function exportCSV() {
+    const { data, label } = getExportData();
+    if (!data || data.length === 0) { showToast('ไม่มีข้อมูลให้ดาวน์โหลด'); return; }
+    const bom = '\uFEFF';
+    const header = '#,ชื่อผู้ใช้,วันที่ติดตาม,ลิงก์\n';
+    const rows = data.map((u, i) => `${i + 1},${u.username},${formatDate(u.timestamp)},${u.href}`).join('\n');
+    downloadFile(bom + header + rows, `ig-${label}.csv`, 'text/csv;charset=utf-8');
+    showToast('✅ ดาวน์โหลด CSV แล้ว!');
+}
+
+function exportTXT() {
+    const { data, label } = getExportData();
+    if (!data || data.length === 0) { showToast('ไม่มีข้อมูลให้ดาวน์โหลด'); return; }
+    const text = `=== ${label} (${data.length} คน) ===\n\n` + data.map((u, i) => `${i + 1}. @${u.username} — ${formatDate(u.timestamp)}`).join('\n');
+    downloadFile(text, `ig-${label}.txt`, 'text/plain;charset=utf-8');
+    showToast('✅ ดาวน์โหลด TXT แล้ว!');
+}
+
+function downloadFile(content, filename, mimeType) {
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+}
+
 // ========== Reset ==========
 
 function resetAll() {
     followersData = followingData = null;
     analysisResults = { notFollowingBack: [], fans: [], mutual: [] };
     currentTab = 'not-following-back';
+    currentPage = 1;
+    sortState = { column: null, direction: 'asc' };
 
     const dz = zipDropzone;
     dz.querySelector('.dropzone-content').innerHTML = `
@@ -332,14 +508,44 @@ function showToast(msg) {
     setTimeout(() => { toast.classList.remove('show'); setTimeout(() => toast.remove(), 400); }, 3000);
 }
 
+// ========== FAQ Toggle ==========
+
+function initFAQ() {
+    document.querySelectorAll('.faq-question').forEach(q => {
+        q.addEventListener('click', () => {
+            const item = q.parentElement;
+            const isOpen = item.classList.contains('open');
+            // Close all
+            document.querySelectorAll('.faq-item.open').forEach(i => i.classList.remove('open'));
+            // Toggle clicked
+            if (!isOpen) item.classList.add('open');
+        });
+    });
+}
+
 // ========== Init ==========
 
 setupDropzone(zipDropzone, zipInput, 'zip');
 analyzeBtn.addEventListener('click', analyze);
 document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => switchTab(btn.dataset.tab)));
 searchInput.addEventListener('input', e => {
+    currentPage = 1;
     const map = { 'not-following-back': 'notFollowingBack', fans: 'fans', mutual: 'mutual' };
     renderTable(analysisResults[map[currentTab]], e.target.value);
 });
 exportBtn.addEventListener('click', exportResults);
 resetBtn.addEventListener('click', resetAll);
+
+// Sorting
+document.querySelectorAll('.sortable').forEach(th => {
+    th.addEventListener('click', () => toggleSort(th.dataset.sort));
+});
+
+// Export buttons
+const csvBtn = document.getElementById('export-csv-btn');
+const txtBtn = document.getElementById('export-txt-btn');
+if (csvBtn) csvBtn.addEventListener('click', exportCSV);
+if (txtBtn) txtBtn.addEventListener('click', exportTXT);
+
+// FAQ
+initFAQ();
